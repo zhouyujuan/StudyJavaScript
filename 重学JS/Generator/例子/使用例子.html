@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+</body>
+<script>
+    // 抽奖次数的控制
+    let draw = function(count) {
+        console.log('还有几次抽奖机会-----', count);
+    }
+
+    let residue = function* (count) {
+        while(count > 0) {
+            count--;
+            yield draw(count);
+        }
+    }
+
+    let star=residue(5)
+    let btn=document.createElement('button')
+    btn.id='start'
+    btn.textContent='抽奖'
+    document.body.appendChild(btn)
+    document.getElementById('start').addEventListener('click',function(){
+        star.next()
+    },false)
+
+</script>
+
+<script>
+    // 生成id值
+    function* getId() {
+        let id = 1;
+        while(true) {
+            yield id++;
+        }
+    }
+
+    const creatId = getId();
+    creatId.next();
+    /*
+    
+    {value: 1, done: false}
+    creatId.next()
+    {value: 2, done: false}
+    creatId.next()
+    {value: 3, done: false}
+    creatId.next()
+    {value: 4, done: false}
+    */
+</script>
+
+</html>

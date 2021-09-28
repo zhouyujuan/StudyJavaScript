@@ -1,2 +1,2 @@
-# StudyJavaScript
-记录js的学习的点击
+# studyJS
+js 学习

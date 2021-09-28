@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+</body>
+<script>
+function* objectEntries(obj) {
+  let propKeys = Reflect.ownKeys(obj);
+  for (let propKey of propKeys) {
+      console.log('obj[propKey].toString()---', obj[propKey].toString())
+    if (obj[propKey].toString() === '[object Object]') {
+      yield* objectEntries(obj[propKey])
+    }
+    else {
+      yield [propKey, obj[propKey]]
+    }
+  }
+}
+
+let jane = {first: 'zz', last: 'yy', middle: {a: 1, b: 2}}
+
+for (let [key, value] of objectEntries(jane)) {
+  console.log(`key: ${key}, value: ${value}`)
+}
+
+// Uncaught TypeError: Found non-callable @@iterator
+console.log(...jane);
+
+const {first} = jane;
+console.log('first------', first); // zz
+
+</script>
+</html>
