@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>new</title>
+</head>
+<body>
+    new的作用是执行构造函数，返回一个对象。 <br />
+    new 步骤：<br />
+    1. 创建一个空对象，作为即将要返回的对象实例。<br />
+    2. 将这个空对象的原型，指向构造函数的prototype属性。(实现关联，用来区分对象类型) <br />
+    3. 将这个空对象赋值给函数内部的this关键字。<br />
+    4. 开始执行构造函数内部的代码。
+
+</body>
+<script>
+
+    function _new(constructor, params) {
+        var args = [].slice.call(arguments);
+        var constructor = args.shift();
+        var context = Object.create(constructor.prototype);
+        // 使用apply 改变构造函数中this的指向，实现继承，是context能够访问到构造函数中的属性
+        var result = constructor.apply(context, args);
+        return (result instanceof Object) ? result : context;
+    }
+
+    function Persion() {
+
+    }
+
+    const p = _new(Persion);
+
+    console.log(p);
+
+    /*
+      const p
+      创建空对象 {}
+      把空对象的 __proto__ 指向 Persion.prototype;
+      {}.__proto__ = Persion.prototype
+      将Persion构造函数的this指向当前对象
+      Persion.apply({}, args);
+      得到p
+    */
+
+
+</script>
+</html>

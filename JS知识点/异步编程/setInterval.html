@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        #someDiv {
+            width: 200px;
+            height: 200px;
+            background: red;
+            border-radius: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div id="someDiv"></div>
+</body>
+<script>
+    var div = document.getElementById('someDiv');
+    var opacity = 1;
+    var width = 200;
+    var height = 200;
+    var samlOrBig = 1; // 1 变小， 2 变大
+
+    var fade = setInterval(function() { 
+        if (opacity > 0 && samlOrBig === 1) {
+            opacity -= 0.1;
+            samlOrBig = 1;
+            width -= 20;
+            height -= 20;
+            
+            if (width === 0) {
+                samlOrBig = 2;
+                opacity = 0.5;
+            }
+            changeStyle(width, height, opacity);
+        }
+
+        if (opacity <= 0 || samlOrBig === 2) {
+            samlOrBig = 2;
+            opacity += 0.1;
+            width += 20;
+            height += 20;
+
+            if (width === 200) {
+                samlOrBig = 1;
+                opacity = 1;
+                width = 200;
+                height = 200;
+            }
+            changeStyle(width, height, opacity);
+        }
+    }, 200)
+
+    function changeStyle(width, height, opacity) {
+        div.style.opacity = opacity;
+        div.style.width = width  + 'px';
+        div.style.height = height  + 'px';
+    }
+</script>
+</html>

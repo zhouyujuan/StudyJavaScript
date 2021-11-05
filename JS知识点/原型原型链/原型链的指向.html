@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+
+重点复习过原型和原型链，熟记那张关系图
+
+</body>
+<script>
+    function Persion() {
+
+    }
+    const p = new Persion();
+
+    console.log(p.__proto__) // Persion.prototype
+    console.log(Persion.prototype.__proto__) // Object.prototype
+    console.log(p.__proto__.__proto__) // Object.prototype
+    console.log(p.__proto__.constructor.prototype.__proto__) // Object.prototype
+    console.log(Persion.prototype.constructor.prototype.__proto__) // Object.prototype
+    console.log(p.__proto__.constructor) // Persion
+    console.log(Persion.prototype.constructor) // Persioin
+</script>
+</html>

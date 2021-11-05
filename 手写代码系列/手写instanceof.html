@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>instanceof</title>
+</head>
+<body>
+    instanceof 运算符，返回一个布尔值，表示对象是否为某个构造函数的实例。<br />
+    左边是实例，右边是构造函数。检查右边的原型对象是否在左边的原型上。检查的是整个原型链。
+</body>
+<script>
+// var a = [];
+// a instanceof Array // true
+
+
+function _instanceof (L, R) {
+    var O = R.prototype;
+    L = L.__proto__;
+    while(true) {
+        if (L === null) {
+            return false;
+        }
+
+        if (O === L) {
+            return true;
+        }
+
+        L = L.__proto__;
+    }
+}
+
+var a1 = [];
+var b1 = {};
+
+console.log(_instanceof(a1, Array));
+console.log(_instanceof(b1, Array));
+
+</script>
+</html>

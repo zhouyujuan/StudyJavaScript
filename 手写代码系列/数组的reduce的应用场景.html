@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+</body>
+
+<script>
+
+class EventEmitter {
+    onObj = {};
+
+    oneObj = {};
+
+    on = (key, callback) => {
+        if (this.onObj[key] === void 0) {
+            this.onObj[key] = [];
+        }
+        this.onObj[key].push(callback);
+        return this;
+    };
+
+    one = (key, callback) => {
+        if (this.oneObj[key] === void 0) {
+            this.oneObj[key] = [];
+        }
+        this.oneObj[key].push(callback);
+        return this;
+    };
+
+    off = (key, callback) => {
+        if (!callback) {
+            delete this.onObj[key];
+            delete this.oneObj[key];
+        }
+        const onArr = this.onObj[key];
+        const oneArr = this.oneObj[key];
+        if (Array.isArray(onArr)) {
+            const onIndex = onArr.indexOf(callback);
+            if (onIndex !== -1) {
+                onArr.splice(onIndex, 1);
+            }
+        }
+        if (Array.isArray(oneArr)) {
+            const oneIndex = oneArr.indexOf(callback);
+            if (oneIndex !== -1) {
+                oneArr.splice(oneIndex, 1);
+            }
+        }
+        return this;
+    };
+
+    trigger = function (...args) {
+        if (arguments.length === 0) {
+            return this;
+        }
+        const [key, ...params] = args;
+        if (isNonEmptyArray(this.onObj[key])) {
+            this.onObj[key].forEach(callback => {
+                callback && callback(...params);
+            });
+        }
+        if (isNonEmptyArray(this.oneObj[key])) {
+            this.oneObj[key].forEach(callback => {
+                callback && callback(...params);
+            });
+            delete this.oneObj[key];
+        }
+        return this;
+    };
+
+    clear = () => {
+        this.onObj = {};
+        this.oneObj = {};
+    };
+}
+
+function isNonEmptyArray(variable) {
+    return Array.isArray(variable) && variable.length;
+}
+
+    class Chat extends EventEmitter {
+    chatList = [];
+
+    isAllForbid = false;
+
+    isForbidMe = false;
+
+    events = {
+        CHAT_LIST_CHANGE: 'chat_list_change',
+        // 初始化聊天列表
+        CHAT_LIST_INIT: 'chat_list_init',
+        // 禁言状态变更
+        FORBID_STATUS_CHANGE: 'forbid_status_change',
+        // 气泡信息变更
+        QUICK_STATS_UPDATE: 'quick_stats_update',
+        // 唤起排行榜
+        GET_PK_RANK: 'get_pk_rank'
+    };
+
+    constructor() {
+        super();
+        // window.moduleManager.addModule('chat', this);
+    }
+
+    getChatList = () => {
+
+    };
+
+    getAllForbid = () => {
+
+    };
+
+    getIsForbid = () => {
+
+    };
+
+    sendMessage = (content, extension) => {
+        
+    };
+
+    sendEmotionMessage = (message, extension) => {
+        
+    };
+
+    // 唤起排行榜
+    getPKRank = data => {
+
+    };
+
+    // 发送本地消息等
+    sendLocalMessage = data => {
+    };
+
+    // 监听气泡更新
+    onCSQuickStatsUpdate = data => {
+    };
+
+    // 监听接收到新消息
+    onCSMsgReceive(camelCaseData) {
+    }
+
+    // 获取初始化聊天列表
+    onCSMsgPullRes(data) {
+    }
+
+    // 监听删除信息
+    onCSMsgDelete(deleteMsg) {
+       
+    }
+
+    onUserStateReq(duration) {
+       
+    }
+
+    // 禁言状态变更
+    onRSMsgSendForbid(data, isAll) {
+        console.log('onRSMsgSendForbid-----')
+        
+    }
+
+    onCSMsgMessageBanned() {
+        console.log('onCSMsgMessageBanned-----')
+    }
+}
+
+    const chat = new Chat();
+
+    chat.APIList = [
+        'events',
+        'on',
+        'one',
+        'off',
+        'trigger',
+        'getChatList',
+        'sendMessage',
+        'sendEmotionMessage',
+        'sendLocalMessage',
+        'getPKRank',
+    ];
+
+
+
+    function extract(module) {
+        console.log('module----', module.APIList);
+        if (!module.APIList) {
+            return module;
+        }
+
+        return module.APIList.reduce((result, apiName) => {
+            const api = module[apiName];
+            console.log('api',  api instanceof Function);
+
+            if (typeof api === 'function') {
+                result[apiName] = (...args) => {
+                    console.log('module----', module[apiName](...args));
+                    return module[apiName](...args)
+                };
+
+                
+            }
+            else {
+                result[apiName] = module[apiName];
+            }
+            return result;
+        }, {});
+    }
+
+    const r = extract(chat);
+    console.log('r----', r);
+
+
+</script>
+<script>
+    /*   **** 重点看下
+        讲了一些概念，但使用场景更重要，下面来看一下reduce方法都会有哪些用途。
+        compose函数
+        compose是函数式编程的一种形式，用于将多个函数合并，
+        上一个函数的返回值作为当前函数的入参，当前函数的返回值再作为下一个函数的入参，
+        这样的效果有点类似于koa中间件的洋葱模型。
+
+        [a, b, c, d] => a(b(c(d())))
+
+        实际上和累加差不多，只不过把累加操作变成了入参执行，
+        相加的结果变成了执行的返回值。redux的applyMiddleware内就使用了compose，
+        目的是保证最终的dispatch是被所有中间件处理后的结果。
+    */
+</script>
+
+<!-- <script>
+    // 数组扁平化
+    const array = [[0, 1], [2, 3], [4, 5]]
+    const flatten = arr => {
+    return arr.reduce((a, b) => {
+        return a.concat(b)
+    }, [])
+    }
+    console.log(flatten(array)); // [0, 1, 2, 3, 4, 5]
+</script> -->
+
+<!-- <script>
+    // 统计字符串中每个字符出现的次数
+    const str = 'adefrfdnnfhdueassjfkdiskcddfjds'
+    const arr = str.split('')
+    const strObj = arr.reduce((all, current) => {
+        if (current in all) {
+            all[current]++
+        } else {
+            all[current] = 1
+        }
+        return all
+    }, {})
+
+    console.log(strObj);
+    // {"a":2,"d":7,"e":2,"f":5,"r":1,"n":2,"h":1,"u":1,"s":4,"j":2,"k":2,"i":1,"c":1}
+</script> -->
+
+<!-- <script>
+    // 数组去重
+    const arr = ['1', 'a', 'c', 'd', 'a', 'c', '1']
+    const afterUnique = arr.reduce((all, current) => {
+        if (!all.includes(current)) {
+            all.push(current)
+        }
+        return all
+        }, [])
+    console.log(afterUnique); //  ["1", "a", "c", "d"]
+</script> -->
+
+<script>
+    // ***** 按照顺序调用promise  
+    /*
+        这种方式实际上处理的是promise的value，将上一个promise的value作为下一个promise的value进行处理。
+        const prom1 = a => {
+            return new Promise((resolve => {
+                resolve(a)
+            }))
+        }
+        const prom2 = a => {
+            return new Promise((resolve => {
+                resolve(a * 2)
+            }))
+        }
+        const prom3 = a => {
+            return new Promise((resolve => {
+                resolve(a * 3)
+            }))
+        }
+
+        const arr = [prom1, prom2, prom3]
+        const result = arr.reduce((all, current) => {
+            return all.then(current)
+        }, Promise.resolve(10))
+
+        result.then(res => {
+            console.log(res);
+        })
+
+        实现
+        通过上面的用法，可以总结出来reduce的特点：
+
+        接收两个参数，第一个为函数，函数内会接收四个参数：Accumulator Current CurrentIndex SourceArray，
+        第二个参数为初始值。
+        返回值为一个所有Accumulator累计执行的结果
+    */
+
+    Array.prototype.myReduce = function(fn, base) {
+        if (this.length === 0 && !base) {
+            throw new Error('Reduce of empty array with no initial value')
+        }
+
+        for (let i = 0; i < this.length; i++) {
+            if (!base) {
+                base = fn(this[i], this[i + 1], i, this)
+                i++
+            } else {
+                base = fn(base, this[i], i, this)
+            }
+        }
+        return base
+    }
+</script>
+
+</html>

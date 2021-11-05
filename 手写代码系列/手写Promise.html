@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+</body>
+<script>
+    function MyPromise(exector) {
+        let self = this;
+        // 状态
+        self.status = 'pending';
+        // 成功的返回
+        self.value = null;
+        // 失败的返回
+        self.reason = null;
+
+        // 成功回调的集合
+        self.fulfilledCallbacks = [];
+        // 失败回调的集合
+        self.rejectedCallbacks = [];
+
+        function resolve(value) {
+            if (self.status === 'pending') {
+                self.status = 'fulfilled';
+                self.value = value;
+                // 模拟异步，在本轮事件循环末尾执行
+                setTimeout(() => {
+                    self.fulfilledCallbacks.forEach(callback => callback(value));
+                });
+            }
+        }
+
+        function reject(reason) {
+            if (self.status === 'pending') {
+                self.status = 'rejected';
+                self.reason = reason;
+
+                setTimeout(() => {
+                    self.rejectedCallbacks.forEach(callback => callback(reason));
+                });
+            }
+        }
+
+        try {
+            exector(resolve, reject);
+        }
+        catch (error) {
+            reject(error);
+        }
+    }
+
+    // then
+    MyPromise.prototype.then = function (onFulfilled, onRejected) {
+        onFulfilled = typeof onFulfilled === 'function' ? onFulfilled : function(value) {return value};
+        onRejected = typeof onRejected === 'function' ? onRejected : function(reason) {return new Error(reason)};
+
+        const self = this;
+
+        return new Promise((resolve, reject) => {
+            function fulfilled() {
+                // 模拟异步
+                return setTimeout(() => {
+                    try {
+                        const result = onFulfilled(self.value);
+                        if (result instanceof MyPromise) {
+                            result.then(resolve, reject);
+                        }
+                        else {
+                            resolve(self.value);
+                        }
+                    }
+                    catch(error) {
+                        reject(error);
+                    }
+                });
+            }
+
+            function rejected() {
+                // 模拟异步
+                return setTimeout(() => {
+                    try {
+                        const result = onRejected(self.reason);
+                        if (result instanceof MyPromise) {
+                            result.then(resolve, reject);
+                        }
+                        else {
+                            reject(self.reason);
+                        }
+                    }
+                    catch(error) {
+                        reject(error);
+                    }
+                });
+            }
+
+            if (self.status === 'pending') {
+                self.fulfilledCallbacks.push(fulfilled);
+                self.rejectedCallbacks.push(rejected);
+            }
+            else if (self.status === 'fulfilled') {
+                fulfilled(self.value);
+            }
+            else if (self.status === 'rejected') {
+                rejected(self.reason);
+            }
+        })
+
+    }
+
+    MyPromise.prototype.finally = function(fn) {
+        this.then(() => {
+            return MyPromise.resolve(fn()).then(() => value);
+        }, err => {
+            return MyPromise.reject(fn()).then(() => {throw Error(err)})
+        })
+    }
+
+    MyPromise.prototype.catch = function(fn) {
+        this.then(null, fn);
+    }
+
+    MyPromise.resolve = function(value) {
+        if (value instanceof MyPromise) {
+            return value;
+        }
+
+        return new MyPromise((resolve, reject) => {
+            if (value && value.then && typeof value.then === 'function') {
+                value.then(resolve, reject)
+            }
+            else {
+                resolve(value);
+            }
+        })
+
+    }
+
+    MyPromise.reject = function(reason) {
+        return new MyPromise((resolve, reject) => {
+            reject(reason);
+        });
+    }
+
+    MyPromise.all = function(params) {
+        if (!(params instanceof Array) || !params.length) {
+            return [];
+        }
+
+        const len = params.length;
+        let results = [];
+        return new MyPromise((resolve, reject) => {
+            for (let i = 0; i < len; i++) {
+                const p = params[i];
+                if (p && p instanceof MyPromise) {
+                    p.then((res) => {
+                        results[i] = res;
+                        if (results.length === len) {
+                            resolve(results);
+                        }
+                    }, (error) => {
+                        reject(error);
+                        return;
+                    });
+                }
+                else {
+                    results[i] = p;
+                    if (results.length === len) {
+                        resolve(results);
+                    }
+                }
+            }
+        })
+        
+    }
+
+    MyPromise.race = function(params) {
+        if (!(params instanceof Array) || !params.length) {
+            return [];
+        }
+
+        const len = params.length;
+        return new MyPromise((resolve, reject) => {
+            // 存在疑问，如果参数不是promise那么是否需要用 Promise.resolve包装一下 ？？？？
+            for (let i = 0; i < len; i++) {
+                const p = params[i];
+                if (p instanceof MyPromise) {
+                    p.then(res => {
+                        resolve(res);
+                        return;
+                    }, error => {
+                        reject(error);
+                        return;
+                    })
+                }
+                else {
+                    resolve(params[i]);
+                    return;
+                }
+            }
+        });
+    }
+
+    // const p1 = new MyPromise((resolve, reject) => {
+    //     setTimeout(() => {
+    //         console.log('settimeout');
+    //        resolve('1111');
+    //         // reject('faill')
+    //     });
+    //     // reject('faill')
+    // })
+
+    // p1.then((res) => {
+    //     console.log('res-1---', res);
+    // }).catch(error => {
+    //     console.log('error----', error)
+    // })
+
+    //  MyPromise.resolve(1)
+    // .then(2)
+    // .then(MyPromise.resolve(3))
+    // .then(res => {
+    //     console.log('res---', res)
+    // })
+
+     // 通过测试
+    // MyPromise.resolve().then(() => {
+    //     return new Error('error!!!')
+    // }).then(res => {
+    //     console.log("then: ", res)
+    // }).catch(err => {
+    //     console.log("catch: ", err)
+    // })
+
+    // 通过
+    // MyPromise.reject('err!!!')
+    // .then((res) => {
+    //     console.log('success', res)
+    // }, (err) => {
+    //     console.log('error', err)
+    // }).catch(err => {
+    //     console.log('catch', err)
+    // })
+
+    // 通过
+    // MyPromise.resolve()
+    // .then(function success (res) {
+    //     throw new Error('error!!!')
+    // }, function fail1 (err) {
+    //     console.log('fail1', err)
+    // }).catch(function fail2 (err) {
+    //     console.log('fail2', err)
+    // })
+
+    // 通过
+    // function runAsync (x) {
+    //     const p = new MyPromise(r => setTimeout(() => r(x, console.log(x)), 1000))
+    //     return p
+    // }
+    // function runReject (x) {
+    //     const p = new MyPromise((res, rej) => setTimeout(() => rej(`Error: ${x}`, console.log(x)), 1000 * x))
+    //     return p
+    // }
+
+    // MyPromise.all([runAsync(1), runReject(4), runAsync(3), runReject(2)])
+    //     .then(res => console.log(res))
+    //     .catch(err => console.log(err))
+
+
+    // function runAsync (x) {
+    //     const p = new MyPromise(r => setTimeout(() => r(x, console.log(x)), 1000))
+    //     return p
+    // }
+    // function runReject (x) {
+    //     const p = new MyPromise((res, rej) => setTimeout(() => rej(`Error: ${x}`, console.log(x)), 1000 * x))
+    //     return p
+    // }
+
+    // MyPromise.all([runAsync(1), runAsync(2), runAsync(3), runAsync(4)])
+    //     .then(res => console.log(res))
+    //     .catch(err => console.log(err))
+</script>
+</html>

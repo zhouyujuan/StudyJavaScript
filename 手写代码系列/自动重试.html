@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+</body>
+<script>
+    /**
+ * 生成自动重试方法
+ *
+ * 返回的方法在调用时候，将执行传入的方法fn，并在失败时候自动重试
+ *
+ * @param {Function} fn 返回值为thenable对象的方法
+ * @param {Number} times 重试的次数
+ * @param {Number} delay 重试时间间隔
+ * @return {Function} 生成的自动重试方法
+ */
+export const createRetryer = options => {
+    const {
+        fn,
+        delay = 1000,
+        limit = 3,
+    } = options;
+
+    const wrappedFN = (...args) => (
+        new Promise((resolve, reject) => {
+            const run = error => {
+                if (wrappedFN.retryTimes === limit) {
+                    reject(error);
+                    return;
+                }
+                fn(...args)
+                    .then(
+                        resolve,
+                        error => {
+                            setTimeout(() => {
+                                wrappedFN.retryTimes++;
+                                run(error);
+                            }, delay);
+                        }
+                    );
+            };
+            run();
+        })
+    );
+
+    wrappedFN.retryTimes = 0;
+
+    return wrappedFN;
+};
+</script>
+</html>

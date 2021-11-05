@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+</body>
+<script>
+function test () {
+    var a = b = 1;
+}
+
+test()
+console.log(a) 
+console.log(window.a) 
+console.log(b)
+
+    // console.log(a) // ReferenceError: a is not defined
+    // console.log(window.a) // undefined
+    // console.log(b) // 1
+</script>
+<script>
+function test(a) {
+    console.log(a)
+    var a = 1;
+    console.log(a)
+    function a () {}
+    console.log(a)
+    var b = function(){}
+    console.log(b);
+    function d(){}
+}
+test(2);
+
+/*
+AO 活跃对象，函数的上下文
+步骤一：寻找函数的形参和变量声明
+AO = {
+    a: undefined,
+    b: undefined
+}
+步骤二：实参的参数值赋值给形参
+AO = {
+    a: undefined->2,
+    b: undefined
+}
+步骤三：寻找函数的声明赋值给函数体
+AO = {
+   a: undefined->2->function a(){},
+   b: undefined,
+   d: function d(){}
+}
+步骤四：执行
+AO = {
+   a: undefined->2->function a(){}->1,
+   b: undefined-> function (){},
+   d: function d(){}
+}
+第一个log 得到的a是 function a () {}
+第二句执行时，a被赋值为1
+第二个log 1
+第三个log 1
+var b = function (){}
+第四个log是 functioin b(){}
+
+test(2);// f()a{} // 1 // f()b{}
+*/
+</script>
+<script>
+    function test (a, b) {
+        console.log(a)
+        c = 0;
+        var c;
+        a = 5;
+        b = 6;
+        console.log(b);
+        function b(){} 
+        function d(){} 
+        console.log(b);
+    }
+    test(1,2)
+    /*
+    AO = {
+        a: undefined,
+            1,
+            5,
+        b: undefined,
+            2,
+            function b(){},
+            6
+        c: undefined,
+            0
+        d: function d(){}
+    }
+    1,6,6
+    */
+</script>
+<script>
+    // 实例1
+    var a = 1;
+    function a() {
+        console.log(2);
+    }
+    console.log(a)
+
+    /*
+    GO = {
+        a: undefined
+        function a
+        1
+        }
+    */
+</script>
+<script>
+// 实例2
+console.log(a,b)
+function a(){}
+var b = function(){}
+
+/*
+ GO = {
+     b: undefined,
+        funciton(){}
+     a: function a(){}
+ }
+*/
+</script>
+<script>
+// 实例3
+function test() {
+    var a = b = 1;
+    console.log(a);
+}
+test();
+/*
+执行之前的过程是预编译的过程
+GO = {
+    b: undefined,
+       1
+}
+AO = {
+    a: undefined,
+       1 // 自己AO 中没有就到GO中去找
+}
+*/
+</script>
+<script>
+// 实例4
+    var b = 3
+    console.log(a)
+    function a (a) {
+        console.log(a)
+        var a = 2;
+        console.log(a)
+        function a () {}
+        var b = 5
+        console.log(b)
+    }
+    a(1)
+    /*
+    GO = {
+        b: undefined,
+        3
+    }
+    AO = {
+        a: undefined,
+        1,
+        function a(){},
+        2,
+        b: undefined,
+        5
+    }
+    fa(a) fa(b),2,5
+    */
+</script>
+<script>
+    // 练习题1
+    function test () {
+        return a
+        a = 1
+        functon a (){}
+        var a = 2
+    }
+    console.log(test())  
+    /*
+    AO = {
+        a: unefined,
+        funcation a(){}
+    }
+    执行就直接return
+    // 浏览器中，严格模式下，报错
+    */
+</script>
+<script>
+// 练习题2
+console.log(test())
+function test () {
+    a = 1;
+    function a () {}
+    var a = 2;
+    return a
+}
+/*
+AO = {
+    a: undefined,
+       function a(){},
+       1,
+       2
+}
+*/
+</script>
+<script>
+// 练习3
+    a = 1;
+    function test(e) {
+        function e(){}
+        arguments[0] = 2
+        console.log(e)
+        if(a){
+            var b = 3
+        }  //  注意if是在执行是才看的，预编译时不看if的判断
+        var c
+        a = 4
+        var a
+        console.log(b)
+        f = 5
+        console.log(c)
+        console.log(a)
+    }
+    var a
+    test(1) 
+    console.log(a)
+    console.log(f)
+    // 2, undefined, undefined , 4, 1, 5
+    /*
+    GO = {
+        a:undefined,
+        1
+        test: function test(){...},
+        f: undefined,
+        5
+    }
+    AO = {
+        e: undefined,
+        function e(){},
+        2
+        b: undefined,
+        a: undefined,
+        4
+        c: undefined
+    }
+    */
+</script>
+<script>
+function foo() {
+    console.log(a);
+    a = 1;
+}
+
+foo();
+
+function bar() {
+    a = 1;
+    console.log(a);
+}
+
+bar();
+</script>
+<script>
+   console.log(foo);
+
+    function foo() {
+        console.log("foo");
+    }
+
+    var foo = 1; 
+</script>
+</html>

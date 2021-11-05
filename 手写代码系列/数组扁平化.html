@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+</body>
+<script>
+    const array = [[1, 2], [1], 0, [1, [1, 2, [1, 2, 3]]]];
+
+    // 数组扁平化
+    // 方法一，在知道有基层的情况  array.float(n)
+    // 方法二， reduce
+    const array = [[0, 1], [2, 3], [4, 5]]
+    const flatten = arr => {
+        return arr.reduce((a, b) => {
+            return a.concat(b)
+        }, [])
+    }
+    console.log(flatten(array));
+
+    // 方法三：toString，在进行分割
+
+    // 方法四：遍历，判断是否是数组，拼接
+
+
+
+</script>
+</html>

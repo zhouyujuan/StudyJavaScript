@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+</body>
+<script>
+    function Persion() {
+
+    }
+
+    Persion.prototype.say = function() {
+        console.log('persion say');
+    }
+
+    function Animal() {
+
+    }
+
+    Animal.prototype = {
+        say: function() {
+            console.log('animal say');
+        }
+    }
+
+    const persion1 = new Persion();
+    persion1.say(); // persion say
+    console.log('persion1--constructor-1--', persion1.__proto__ === Persion.prototype); // true
+    console.log('persion1--constructor-2--', persion1.__proto__ === persion1.constructor.prototype); // true
+    console.log('persion1--constructor-3--', persion1.constructor === Persion); // true
+    console.log('persion1--constructor-4--', persion1.constructor === Object); // false
+
+    const animal1 = new Animal();
+    animal1.say(); // animal say
+    console.log('animal--constructor-1--', animal1.__proto__ === Animal.prototype); // true
+    console.log('Animal.prototype-----', Animal.prototype);
+    console.log('animal1.constructor.prototype-----', animal1.constructor.prototype);
+    console.log('animal--constructor-2--', animal1.__proto__ === animal1.constructor.prototype); // false
+    console.log('animal--constructor-3--', animal1.constructor === Animal); // false
+    console.log('animal--constructor-4--', animal1.constructor === Object); // true
+
+    // 注意覆盖的方式，animal1的构造函数 animal1.constructor就不在指向 Animal了。指向了Object。导致无法使用constructor判断类型了。  
+    // animal1上其实没有constructor属性，constructor属性是在 Animal.prototype属性上的。现在Animal.prototype被覆盖了，所以指针的指向就发生了变化。
+    
+    // 修改上面的问题, 更改下constructor的指向。这样constructor属性就变成了可枚举的属性了。[[enumerable]]设置成了true.
+    animal1.__proto__.constructor = Animal;
+    console.log('animal--', Object.keys(animal1.__proto__)); // ['say', 'constructor'] 属性被枚举了
+    Object.defineProperty(animal1.__proto__, 'constructor', { enumerable: false}); // 需要设置为false
+    console.log('animal-fix-constructor-3--', animal1.constructor === Animal); // true
+    console.log('animal-fix-constructor-4--', animal1.constructor === Object); // false
+</script>
+
+<script>
+    function AnimalOne() {
+
+    }
+
+    let animal2 = new AnimalOne();
+
+    AnimalOne.prototype = {
+        // 注意这里要把constructor给赋值到AnimalOne上
+        constructor: AnimalOne,
+        say: function() {
+            console.log('animal say');
+        }
+    }
+
+    animal2.__proto__ = AnimalOne.prototype;
+
+    animal2.say(); // animal1.say is not a function
+
+    /*
+        在new之后重新覆盖了原型对象。切断了构造函数和最初原型对象之的关系。
+        实例对象中 __proto__ 一直指向的是最初的原型对象，现在原型被重写了，相当于在堆内存中另起了一块内存，
+        原型指针的指向也发生了变化，指向了新的内存，但是实例中__proto__这个指针还是最初的那一块内存中的原型对象。
+
+        修改的方法，添加依据
+        animal2.__proto__ = AnimalOne.prototype
+    
+    */
+</script>
+
+</html>

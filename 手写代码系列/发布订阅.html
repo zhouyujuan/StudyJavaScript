@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+</body>
+<script>
+    class EventEmitter {
+        constructor() {
+            this.events = {};
+        }
+
+        on(type, handler) {
+            if (!(type in this.events)) {
+                this.events[type] = [];
+            }
+            this.events[type].push(handler);
+        }
+
+        emit(type, params) {
+            if (!(type in this.events)) {
+                return new Error('事件未注册');
+            }
+
+            this.events[type].forEach(handler => {
+
+                handler(params);
+            })
+        }
+
+        // 只订阅一次就删除
+        once(type, handler) {
+            if (!(type in this.events)) {
+                this.events[type] = [];
+            }
+
+            const fn = () => {
+                handler();
+                this.remove(type, handler);
+                delete this.events[type];
+            }
+
+            this.on(type, fn);
+        }
+
+        remove(type, handler) {
+            if (!(type in this.events)) {
+                return new Error('事件未注册');
+            }
+
+            if (!this.events[type]) {
+                delete this.events[type];
+            }
+            else {
+                const handlers = this.events[type];
+                const index = handlers.findIndex(hd => hd === handler);
+
+                if (index < 0) {
+                    return new Error('未绑定事件');
+                }
+
+                handlers.splice(index, 1);
+
+                if (handlers.length === 0) {
+                    delete this.events[type];
+                }
+            }
+          
+        }
+    }
+
+    const events = new EventEmitter();
+
+    events.on('success', handleSuccess);
+
+    function handleSuccess(params) {
+        console.log('触发success', params);
+
+        setTimeout(() => {
+            events.remove('success', handleSuccess);
+        });
+    }
+
+    setTimeout(() => {
+        events.emit('success', {a: 'a', b: 'b'});
+    }, 1000);
+
+</script>
+</html>

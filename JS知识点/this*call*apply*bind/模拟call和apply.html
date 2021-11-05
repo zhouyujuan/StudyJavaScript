@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div>call方法，在使用一个指定的this值和若干个指定的参数值的前提下，调用某个函数</div>
+    <div>思路：</div>
+    <div>
+        (1) 判断调用的对象是否是函数<br/>
+        (2) 判断传入的上下文是否存在，不存在就默认是window<br />
+        (3) 处理传入的参数，截取第一个参数后，剩余的其他 <br />
+        (4) 将函数作为上下文对象的一个属性 <br />
+        (5) 使用上下文对象调用这个方法，并保存结果<br />
+        (6) 删除刚才新增的属性 <br />
+        (7) 返回结果
+    </div>
+</body>
+<script>
+    /*
+    var foo = {
+        value: 1
+    };
+
+    function bar() {
+        console.log(this.value);
+    }
+
+    bar.call(foo); // 1
+    */
+   
+    // var foo = {
+    //     value: 1,
+    //     bar: function() {
+    //         console.log(this.value)
+    //     }
+    // };
+    // foo.bar(); // 1
+     // 这个时候 this 就指向了 foo，是不是很简单呢？
+    // 但是这样却给 foo 对象本身添加了一个属性，这可不行呐！
+    // 不过也不用担心，我们用 delete 再删除它不就好了~
+
+
+    Function.prototype.call2 = function(context) {
+        if (typeof this !== 'function') {
+            throw Error('type error');
+        }
+        var con = context || window;
+        con.fn = this;
+        var result;
+
+        var args = [...arguments].slice(1);
+        result = con.fn(...args);
+        delete con.fn;
+        return result;
+    }
+
+
+    Function.prototype.myApply = function(context) {
+        if (typeof this === 'function') {
+            throw Error('type error');
+        }
+
+        var con = context || window;
+        con.fn = this;
+        var result;
+        var args = [...arguments].slice(1);
+        if (args) {
+            result = con.fn(args);
+        }
+        else {
+            result = con.fn()
+        }
+
+        delete con.fn;
+        return result;
+    }
+
+    // 测试一下
+    var foo = {
+        value: 1
+    };
+
+    function bar(name, age) {
+        console.log(name)
+        console.log(age)
+        console.log(this.value);
+    }
+
+    bar.call2(foo, 'kevin', 18); 
+</script>
+</html>

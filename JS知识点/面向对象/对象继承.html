@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+</body>
+<!-- <script>
+    function Parent() {
+        this.name = ['z1', 'z2'];
+    }
+
+    Parent.prototype.getName = function() {
+        console.log('Parent.prototype--', this.name);
+    }
+
+    function Child() {
+
+    }
+
+    Child.prototype = new Parent();
+    Child.prototype.name = '小孩'
+    const child1 = new Child();
+    console.log(child1.getName()); // 小孩
+</script> -->
+
+<!-- <script>
+    function Parent() {
+        // this.names = ['z1', 'z2'];
+    }
+
+    Parent.prototype.getName = function() {
+        console.log('Parent.prototype--', this.name);
+    }
+
+    Parent.prototype.names = ['zz1', 'zz2'];
+
+    function Child() {
+
+    }
+
+    Child.prototype = new Parent();
+
+    const child1 = new Child();
+    child1.names.push('child1');
+    // // [z1, z2, child1]
+    console.log('child1.names:', child1.names);
+
+    const child2 = new Child();
+    child2.names.push('child2');
+    // // [z1, z2, child1, child2];
+    console.log('child2.names:', child2.names);
+
+    console.log('1---', child2 instanceof Child); // true
+    console.log('2----', child2 instanceof Parent); // true
+
+</script> -->
+
+<!-- <script>
+    function Parent() {
+        this.names = ['z1', 'z2'];
+    }
+
+    Parent.prototype.getName = function() {
+        console.log('getName-----', this.names);
+    }
+
+    function Child() {
+        Parent.call(this);
+    }
+
+    var child1 = new Child();
+    child1.names.push('zz1');
+    console.log(child1.names); // [z1, z2, zz1]
+    child1.getName(); // child1.getName is not a function
+
+    var child2 = new Child();
+    child2.names.push('zz2');
+    console.log(child2.names); // [z1, z2, zz2]
+    // child2.getName();
+</script> -->
+<!-- <script>
+    function Parent(name) {
+        this.name = name;
+    }
+
+    Parent.prototype.getName = function() {
+        console.log('getName-----', this.names);
+    }
+
+    function Child(name) {
+        Parent.call(this, name);
+    }
+
+    var child1 = new Child('z1');
+    console.log(child1.name); // z1
+
+    var child2 = new Child('z2');
+    console.log(child2.name); // z2
+
+    console.log('1---', child2 instanceof Child); // true
+    console.log('2----', child2 instanceof Parent); // false
+
+</script> -->
+<script>
+    function Parent(name) {
+        this.name = name;
+        this.colors = ['red', 'blue'];
+    }
+
+    Parent.prototype.getName = function() {
+        console.log('getName-----', this.name);
+    }
+
+    function Child(name, age) {
+        Parent.call(this, name);
+    }
+
+    Child.prototype = new Parent();
+
+    var child1 = new Child('child1', 18);
+    child1.colors.push('child1-color');
+    console.log('child1-colors-----', child1.colors);
+    child1.getName(); // child1
+
+    var child2 = new Child('child2', 20);
+    child2.colors.push('child2-color');
+    console.log('child2-colors-----', child2.colors);
+    child2.getName(); // child2
+</script>
+</html>

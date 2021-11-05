@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    以&分割，左边作为key，右边作为value组成的对象(若key值为下划线则转成驼峰)
+</body>
+<script>
+    function parseQuery() {
+        const url = location.href;
+        
+    }
+
+    // import {flowRight, floor} from 'lodash-es';
+
+    /**
+ * @description: 解析地址栏的url
+ * @return {Object} 以&分割，左边作为key，右边作为value组成的对象
+ */
+// export function parseQuery(query = window.location.href) {
+//     const params: Record<string, string> = {};
+//     const search = query.split('?')[1];
+//     if (!search) {
+//         return params;
+//     }
+//     search.split('&').forEach(param => {
+//         const pair = param.split('=');
+//         const key = pair[0];
+//         const value = decodeURIComponent(pair[1]);
+//         params[key] = value;
+//     });
+//     return params;
+
+
+    // const transformEntries
+    // = <T>(entries: [string, T][]): [string, T][] => entries.map(pair => [underline2Hump(pair[0]), pair[1]]);
+
+    // const fromEntries = (entries: [string, any]) => entries.reduce((result, [key, value]) => {
+    //     result[key] = value;
+    //     return result;
+    // }, {});
+
+    // /**
+    // * 解析地址栏的url
+    // * @author chenbaijin
+    // * @return 以&分割，左边作为key，右边作为value组成的对象(若key值为下划线则转成驼峰)
+    // */
+    // export const parseRoomUrl
+    // = () => flowRight(fromEntries, transformEntries, Object.entries, parseQuery)() as IQueryParams;
+    // }
+</script>
+</html>
